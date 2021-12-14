@@ -21,7 +21,7 @@ export class BoardsService {
     const found = await this.boardsRepository.findOne(id);
 
     if (!found)
-      throw new NotFoundException();
+      throw new NotFoundException(`${id} is not found`);
 
     return found;
   }
@@ -30,7 +30,7 @@ export class BoardsService {
     const found = await this.boardsRepository.findOne(id);
 
     if (!found)
-      throw new NotFoundException();
+      throw new NotFoundException(`${id} is not found`);
     found.status = status;
     await this.boardsRepository.save(found);
 
@@ -39,10 +39,10 @@ export class BoardsService {
 
   async removeBoard(id: number): Promise<void> {
     const result = await this.boardsRepository.delete(id);
-    
+
     this.logger.debug(`result: ${JSON.stringify(result)}`);
     if (result.affected === 0) {
-      throw new NotFoundException();
+      throw new NotFoundException(`${id} is not found`);
     }
   }
 }

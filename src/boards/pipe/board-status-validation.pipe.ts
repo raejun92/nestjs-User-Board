@@ -11,7 +11,7 @@ export class BoardStatusValidationPipe implements PipeTransform {
 		value = value.toUpperCase();
 
 		if (!(this.isSatatusValid(value))) {
-			throw new BadRequestException();
+			throw new BadRequestException(`${value} is not in the status options`);
 		}
 
 		return value;
