@@ -45,7 +45,10 @@ export class BoardsController {
   }
 
   @Delete(':id')
-  removeBoard(@Param('id') id: string) {
+  @UsePipes(ParseIntPipe)
+  removeBoard(
+    @Param('id') id: string
+  ): Promise<void> {
     return this.boardsService.removeBoard(+id);
   }
 }

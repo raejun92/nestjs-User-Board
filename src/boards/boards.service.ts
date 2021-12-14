@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { BoardStatus } from './board-status.enum';
 import { BoardsRepository } from './boards.repository';
 import { CreateBoardDto } from './dto/create-board.dto';
@@ -6,6 +6,7 @@ import { Board } from './entities/board.entity';
 
 @Injectable()
 export class BoardsService {
+  private logger = new Logger('BoardService');
   constructor(private boardsRepository: BoardsRepository) {}
 
   createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
@@ -36,7 +37,12 @@ export class BoardsService {
     return found;
   }
 
-  removeBoard(id: number) {
-    return `This action removes a #${id} board`;
+  async removeBoard(id: number): Promise<void> {
+    const result = await this.boardsRepository.delete(id);
+    
+    this.logger.debug(`result: ${JSON.stringify(result)}`);
+    if (result.affected === 0) {
+      throw new NotFoundException();
+    }
   }
 }
