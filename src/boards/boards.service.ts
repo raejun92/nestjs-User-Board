@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { BoardStatus } from './board-status.enum';
 import { BoardsRepository } from './boards.repository';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { Board } from './entities/board.entity';
@@ -24,8 +25,15 @@ export class BoardsService {
     return found;
   }
 
-  updateBoard(id: number) {
-    return `This action updates a #${id} board`;
+  async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
+    const found = await this.boardsRepository.findOne(id);
+
+    if (!found)
+      throw new NotFoundException();
+    found.status = status;
+    await this.boardsRepository.save(found);
+
+    return found;
   }
 
   removeBoard(id: number) {

@@ -1,7 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UsePipes, ValidationPipe, Query, ParseIntPipe } from '@nestjs/common';
+import { BoardStatus } from './board-status.enum';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { Board } from './entities/board.entity';
+import { BoardStatusValidationPipe } from './pipe/board-status-validation.pipe';
 
 @Controller('boards')
 export class BoardsController {
@@ -32,9 +34,14 @@ export class BoardsController {
     return this.boardsService.findOneBoard(+id);
   }
 
-  @Patch(':id')
-  updateBoard(@Param('id') id: string) {
-    return this.boardsService.updateBoard(+id);
+  @Patch(':id/status')
+  updateBoardStatus(
+    @Param('id', ParseIntPipe) id: string,
+    // BoardStatusValidationPipe는 status의 값이 private 또는 public만 가능 하도록 예외처리
+    @Body('status', BoardStatusValidationPipe) status: BoardStatus
+  ): Promise<Board> {
+    this.logger.debug(`id: ${id}, status: ${status}`);
+    return this.boardsService.updateBoardStatus(+id, status);
   }
 
   @Delete(':id')
