@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UsePipes, ValidationPipe, Query } from '@nestjs/common';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { Board } from './entities/board.entity';
@@ -13,27 +13,29 @@ export class BoardsController {
   createBoard(
     @Body() createBoardDto: CreateBoardDto
   ): Promise<Board> {
-    this.logger.log(`createBoardDto: ${JSON.stringify(createBoardDto)}`);
+    this.logger.debug(`createBoardDto: ${JSON.stringify(createBoardDto)}`);
     return this.boardsService.createBoard(createBoardDto);
   }
 
   @Get()
-  findAllBoard() {
-    return this.boardsService.findAll();
+  findAllBoard(
+    // Query 추가(유저 이름으로 해당 유저에 관한 게시글만 리턴)
+  ): Promise<Board[]> {
+    return this.boardsService.findAllBoard();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.boardsService.findOne(+id);
+  findOneBoard(@Param('id') id: string) {
+    return this.boardsService.findOneBoard(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string) {
-    return this.boardsService.update(+id);
+  updateBoard(@Param('id') id: string) {
+    return this.boardsService.updateBoard(+id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.boardsService.remove(+id);
+  removeBoard(@Param('id') id: string) {
+    return this.boardsService.removeBoard(+id);
   }
 }

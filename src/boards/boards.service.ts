@@ -10,19 +10,19 @@ export class BoardsService {
     return this.boardsRepository.createBoard(createBoardDto);
   }
 
-  findAll() {
-    return `This action returns all boards`;
+  findAllBoard() {
+    return this.boardsRepository.find();
   }
 
-  findOne(id: number) {
+  findOneBoard(id: number) {
     return `This action returns a #${id} board`;
   }
 
-  update(id: number) {
+  updateBoard(id: number) {
     return `This action updates a #${id} board`;
   }
 
-  remove(id: number) {
+  removeBoard(id: number) {
     return `This action removes a #${id} board`;
   }
 }
