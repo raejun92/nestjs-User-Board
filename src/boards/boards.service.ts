@@ -1,21 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { BoardsRepository } from './boards.repository';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { Board } from './entities/board.entity';
 
 @Injectable()
 export class BoardsService {
   constructor(private boardsRepository: BoardsRepository) {}
 
-  createBoard(createBoardDto: CreateBoardDto) {
+  createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
     return this.boardsRepository.createBoard(createBoardDto);
   }
 
-  findAllBoard() {
+  findAllBoard(): Promise<Board[]> {
     return this.boardsRepository.find();
   }
 
-  findOneBoard(id: number) {
-    return `This action returns a #${id} board`;
+  async findOneBoard(id: number): Promise<Board> {
+    const found = await this.boardsRepository.findOne(id);
+
+    if (!found)
+      throw new NotFoundException();
+
+    return found;
   }
 
   updateBoard(id: number) {
