@@ -17,7 +17,7 @@ export class userRepository extends Repository<User> {
 			await this.save(user);
 		} catch (err) {
 			this.logger.debug(`err: ${err.code}`);
-			
+	
 			if (err.code === '23505') {
 				throw new ConflictException('Existing username');
 			} else {

@@ -18,7 +18,7 @@ export class BoardsService {
   }
 
   async findOneBoard(id: number): Promise<Board> {
-    const found = await this.boardsRepository.findOne(id);
+    const found = await this.boardsRepository.findOne({ id });
 
     if (!found)
       throw new NotFoundException(`${id} is not found`);
