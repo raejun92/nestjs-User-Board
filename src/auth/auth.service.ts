@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { AuthCredentialsDto } from './dto/create-auth.dto';
@@ -6,6 +6,7 @@ import { userRepository } from './user.Repository';
 
 @Injectable()
 export class AuthService {
+  private logger = new Logger('AuthService');
   constructor(
     private userRepository: userRepository,
     private jwtService: JwtService
@@ -25,6 +26,7 @@ export class AuthService {
     const payload = { username };
     const accessToken = this.jwtService.sign(payload);
 
+    this.logger.debug(`Output: ${JSON.stringify(accessToken)}`)
     return { accessToken };
   }
 }

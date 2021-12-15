@@ -1,4 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UsePipes, ValidationPipe, Query, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UsePipes, ValidationPipe, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from 'src/auth/entities/auth.entity';
+import { GetUser } from 'src/auth/get-user-decorator';
 import { BoardStatus } from './board-status.enum';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
@@ -11,12 +14,14 @@ export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
   @Post()
+  @UseGuards(AuthGuard())
   @UsePipes(ValidationPipe) // 입력 프로퍼티 예외처리
   createBoard(
-    @Body() createBoardDto: CreateBoardDto
+    @Body() createBoardDto: CreateBoardDto,
+    @GetUser() user: User
   ): Promise<Board> {
     this.logger.debug(`createBoardDto: ${JSON.stringify(createBoardDto)}`);
-    return this.boardsService.createBoard(createBoardDto);
+    return this.boardsService.createBoard(createBoardDto, user);
   }
 
   @Get()
@@ -35,20 +40,24 @@ export class BoardsController {
   }
 
   @Patch(':id/status')
+  @UseGuards(AuthGuard())
   updateBoardStatus(
     @Param('id', ParseIntPipe) id: string,
     // BoardStatusValidationPipe는 status의 값이 private 또는 public만 가능 하도록 예외처리
-    @Body('status', BoardStatusValidationPipe) status: BoardStatus
+    @Body('status', BoardStatusValidationPipe) status: BoardStatus.PUBLIC,
+    @GetUser() user: User
   ): Promise<Board> {
     this.logger.debug(`id: ${id}, status: ${status}`);
-    return this.boardsService.updateBoardStatus(+id, status);
+    return this.boardsService.updateBoardStatus(+id, status, user);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard())
   @UsePipes(ParseIntPipe)
   removeBoard(
-    @Param('id') id: string
+    @Param('id') id: string,
+    @GetUser() user: User
   ): Promise<void> {
-    return this.boardsService.removeBoard(+id);
+    return this.boardsService.removeBoard(+id, user);
   }
 }

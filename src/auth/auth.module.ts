@@ -12,7 +12,7 @@ import { JwtStrategy } from './jwt.strategy';
     TypeOrmModule.forFeature([userRepository]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: 'secret', // 토큰을 만들기 위한 secret
+      secret: 'jwtsecret', // 토큰을 만들기 위한 secret
       signOptions: {
         expiresIn: 3600
       }

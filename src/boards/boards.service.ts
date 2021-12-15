@@ -1,4 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { User } from 'src/auth/entities/auth.entity';
 import { BoardStatus } from './board-status.enum';
 import { BoardsRepository } from './boards.repository';
 import { CreateBoardDto } from './dto/create-board.dto';
@@ -9,8 +10,8 @@ export class BoardsService {
   private logger = new Logger('BoardService');
   constructor(private boardsRepository: BoardsRepository) {}
 
-  createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
-    return this.boardsRepository.createBoard(createBoardDto);
+  createBoard(createBoardDto: CreateBoardDto, user: User): Promise<Board> {
+    return this.boardsRepository.createBoard(createBoardDto, user);
   }
 
   findAllBoard(): Promise<Board[]> {
@@ -26,8 +27,8 @@ export class BoardsService {
     return found;
   }
 
-  async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
-    const found = await this.boardsRepository.findOne(id);
+  async updateBoardStatus(id: number, status: BoardStatus, user: User): Promise<Board> {
+    const found = await this.boardsRepository.findOne({ id, user });
 
     if (!found)
       throw new NotFoundException(`${id} is not found`);
@@ -37,8 +38,8 @@ export class BoardsService {
     return found;
   }
 
-  async removeBoard(id: number): Promise<void> {
-    const result = await this.boardsRepository.delete(id);
+  async removeBoard(id: number, user: User): Promise<void> {
+    const result = await this.boardsRepository.delete({ id, user });
 
     this.logger.debug(`result: ${JSON.stringify(result)}`);
     if (result.affected === 0) {
