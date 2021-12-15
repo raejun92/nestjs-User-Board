@@ -27,6 +27,19 @@ export class BoardsService {
     return found;
   }
 
+  async updateBoard(id: number, title: string, description: string, user: User): Promise<Board> {
+    const found = await this.boardsRepository.findOne({ id, user });
+
+    if (!found) {
+      throw new NotFoundException(`${id} is not found`);
+    }
+    found.title = title;
+    found.description = description;
+    await this.boardsRepository.save(found);
+
+    return found;
+  }
+
   async updateBoardStatus(id: number, status: BoardStatus, user: User): Promise<Board> {
     const found = await this.boardsRepository.findOne({ id, user });
 

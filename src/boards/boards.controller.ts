@@ -39,6 +39,19 @@ export class BoardsController {
     return this.boardsService.findOneBoard(+id);
   }
 
+  @Patch(':id')
+  @UseGuards(AuthGuard())
+  updateBoard(
+    @Param('id', ParseIntPipe) id: string,
+    // BoardStatusValidationPipe는 status의 값이 private 또는 public만 가능 하도록 예외처리
+    @Body('title') title: string,
+    @Body('descripton') description: string,
+    @GetUser() user: User
+  ): Promise<Board> {
+    this.logger.debug(`id: ${id}, title: ${title}, description: ${description}, user: ${user}`);
+    return this.boardsService.updateBoard(+id, title, description, user);
+  }
+
   @Patch(':id/status')
   @UseGuards(AuthGuard())
   updateBoardStatus(
