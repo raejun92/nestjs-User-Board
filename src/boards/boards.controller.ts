@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UsePipes, ValidationPipe, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Logger, UsePipes, ValidationPipe, ParseIntPipe, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/auth/entities/auth.entity';
 import { GetUser } from 'src/auth/get-user-decorator';
@@ -26,9 +26,16 @@ export class BoardsController {
 
   @Get()
   findAllBoard(
-    // TODO: Query 추가(유저 이름으로 해당 유저에 관한 게시글만 리턴)
   ): Promise<Board[]> {
     return this.boardsService.findAllBoard();
+  }
+
+  @Get('me')
+  @UseGuards(AuthGuard())
+  findAllBoardMe(
+    @GetUser() user: User
+  ): Promise<Board[]> {
+    return this.boardsService.findAllBoardMe(user);
   }
 
   @Get(':id')
